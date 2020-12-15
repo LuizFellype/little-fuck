@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Fodinha",
+  "name": "Little Fuck",
+  "description": "Hanlde Little Fuck rules",
   "icons": [
     {
       "src": "favicon.ico",

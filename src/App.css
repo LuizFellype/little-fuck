@@ -1,0 +1,12 @@
+.app-wrapper {
+    max-width: 480px;
+    margin: auto;
+}
+.item-wrapper {
+    padding: 0 5%;
+    max-width: 430px;
+    margin: auto;
+}
+.header-to-start {
+    padding: 1.5rem 0.25rem 0.5rem;
+}

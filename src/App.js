@@ -34,8 +34,8 @@ function ListItem(props) {
     </div>
 
     {
-      isPlaying && <div className="p-d-flex p-jc-center">
-        <Button onClick={() => hasDone && onHasDoneChange(Number(hasDone) - 1)} icon="pi pi-minus" className="p-button-outlined p-button-danger p-ai-center" />
+      isPlaying && <div className="p-d-flex p-jc-center couting-point-wrapper">
+        <Button onClick={() => hasDone && onHasDoneChange(Number(hasDone) - 1)} icon="pi pi-minus" className="p-button-outlined p-button-danger p-as-center" />
         <Button
           label={`${hasDone}`}
           icon='pi pi-check-circle'
@@ -44,7 +44,7 @@ function ListItem(props) {
           className="p-button-rounded p-button-text p-as-start p-button-lg" />
         <Button onClick={() =>
           onHasDoneChange(Number(hasDone) + 1)
-        } icon="pi pi-plus" className="p-button-outlined p-button-success p-ai-center" />
+        } icon="pi pi-plus" className="p-button-outlined p-button-success p-as-center" />
       </div>
     }
   </div>

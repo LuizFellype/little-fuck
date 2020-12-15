@@ -10,3 +10,7 @@
 .header-to-start {
     padding: 1.5rem 0.25rem 0.5rem;
 }
+.couting-point-wrapper {
+    padding-bottom: 10px;
+    border-bottom: 1px #cccc3161 solid;
+}

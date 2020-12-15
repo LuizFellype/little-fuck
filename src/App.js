@@ -93,7 +93,7 @@ function App() {
     <div className='app-wrapper'>
       <div className={`p-d-flex ${isPlaying ? 'p-jc-center' : 'p-jc-around'} header-to-start`}>
         {!isPlaying && <Input onSubmit={value => setList([...list, { name: value, guess: 0, lifes: defaultLifes, hasDone: 0 }].sort((a, b) => a.name - b.name))} />}
-        <Button onClick={handleStartAndStopPlay} className={`${isPlaying ? 'p-button-outlined p-button-danger' : ''}`}>{isPlaying ? <FaRegStopCircle /> : <FaPlay />}</Button>
+        {!!list.length && <Button onClick={handleStartAndStopPlay} className={`${isPlaying ? 'p-button-outlined p-button-danger' : ''}`}>{isPlaying ? <FaRegStopCircle /> : <FaPlay />}</Button>}
       </div>
 
       {

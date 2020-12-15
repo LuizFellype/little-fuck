@@ -1,7 +1,7 @@
 import { InputText } from 'primereact/inputtext';
 import { FaRegStopCircle, FaPlay } from "react-icons/fa";
 import { Button } from 'primereact/button';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import Input from './components/Input';
 
@@ -11,13 +11,14 @@ const defaultLifes = 3
 function ListItem(props) {
   const { lifes, name, guess = 0, hasDone = 0, onHasDoneChange, onGuessChange, isPlaying, onLifeChange } = props
   const [isGuessing, setIsGuessing] = useState(false)
+  const inputRef = useRef(null)
 
   return <div className="p-d-flex p-flex-column p-jc-center item-wrapper">
     <div className="p-d-flex p-jc-between">
       <Button disabled label={`${lifes}`} onClick={() => lifes && onLifeChange()} icon="pi pi-heart" className="p-button-rounded p-button-help p-button-text" />
       <h2>{name}</h2>
       {isGuessing ?
-        <InputText type='number' style={{ width: '3.2rem' }} onBlur={e => {
+        <InputText ref={inputRef} type='number' style={{ width: '3.2rem' }} onBlur={e => {
           onGuessChange(e.target.value)
           setIsGuessing(false)
         }}
@@ -28,7 +29,12 @@ function ListItem(props) {
         <Button
           icon='pi pi-question-circle'
           label={`${guess || 0}`}
-          onClick={() => !isPlaying && setIsGuessing(true)}
+          onClick={() => {
+            !isPlaying && setIsGuessing(true)
+            setTimeout(() => {
+              inputRef.current.element.focus()
+            }, 10)
+          }}
           className="p-button-rounded p-button-text p-as-center" />
       }
     </div>
@@ -58,7 +64,6 @@ function App() {
   useEffect(() => {
     if (!isPlaying && list.length) {
       setList(crrList => {
-        console.log('CRR LINST', crrList)
         return crrList.map(item => ({ ...item, guess: 0, hasDone: 0 }))
       })
     }
@@ -70,7 +75,6 @@ function App() {
       // check if anyone has to die
       setList(list.map(item => {
         if (!item.lifes) return item
-        console.log('ITEM --', item)
         if (Number(item.hasDone) !== Number(item.guess)) {
           if (Number(item.lifes) === 1) {
             alert(`${item.name} Morreeeeeuuu. Mete o pé porra.`)

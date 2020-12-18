@@ -1,7 +1,7 @@
-import { InputText } from 'primereact/inputtext';
+import { InputNumber } from 'primereact/inputnumber';
 import { FaRegStopCircle, FaPlay } from "react-icons/fa";
 import { Button } from 'primereact/button';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
 import Input from './components/Input';
 
@@ -10,33 +10,19 @@ const defaultLifes = 3
 
 function ListItem(props) {
   const { lifes, name, guess = 0, hasDone = 0, onHasDoneChange, onGuessChange, isPlaying, onLifeChange } = props
-  const [isGuessing, setIsGuessing] = useState(false)
-  const inputRef = useRef(null)
 
-  return <div className="p-d-flex p-flex-column p-jc-center item-wrapper">
-    <div className="p-d-flex p-jc-between">
+  return <div className="p-d-flex p-flex-column p-jc-center item-wrapper p-mb-2">
+    <div className="p-d-flex p-jc-between p-ai-center">
       <Button disabled label={`${lifes}`} onClick={() => lifes && onLifeChange()} icon="pi pi-heart" className="p-button-rounded p-button-help p-button-text" />
       <h2>{name}</h2>
-      {isGuessing ?
-        <InputText ref={inputRef} type='number' style={{ width: '3.2rem' }} onBlur={e => {
-          onGuessChange(e.target.value)
-          setIsGuessing(false)
-        }}
-          placeholder='0'
-          className='p-as-center'
-        />
-        :
-        <Button
+
+      {isPlaying ? <Button
           icon='pi pi-question-circle'
           label={`${guess || 0}`}
-          onClick={() => {
-            !isPlaying && setIsGuessing(true)
-            setTimeout(() => {
-              inputRef.current.element.focus()
-            }, 10)
-          }}
-          className="p-button-rounded p-button-text p-as-center" />
-      }
+          disabled
+          className="p-button-rounded p-button-text p-as-center" />:
+      <InputNumber id="vertical" value={guess} onValueChange={(e) => onGuessChange(e.value)} mode="decimal" showButtons buttonLayout="vertical" style={{ width: '3rem' }} decrementButtonClassName="p-button-secondary" incrementButtonClassName="p-button-secondary" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" />
+}
     </div>
 
     {

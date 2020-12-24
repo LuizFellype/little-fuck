@@ -87,34 +87,40 @@ function App() {
   }
 
   return (
-    <div className='app-wrapper'>
-      <div className={`p-d-flex ${isPlaying ? 'p-jc-center' : 'p-jc-around'} header-to-start`}>
-        {!isPlaying && <Input onSubmit={value => setList(orderByDeads([...list, { name: value, guess: 0, lifes: defaultLifes, hasDone: 0 }].sort((a, b) => a.name - b.name)))} />}
-        {!!list.length && <Button onClick={handleStartAndStopPlay} className={`${isPlaying ? 'p-button-outlined p-button-danger' : ''}`}>{isPlaying ? <FaRegStopCircle /> : <FaPlay />}</Button>}
+    <>
+      <div className='app-wrapper'>
+        <div className={`p-d-flex ${isPlaying ? 'p-jc-center' : 'p-jc-around'} header-to-start`}>
+          {!isPlaying && <Input onSubmit={value => setList(orderByDeads([...list, { name: value, guess: 0, lifes: defaultLifes, hasDone: 0 }].sort((a, b) => a.name - b.name)))} />}
+          {!!list.length && <Button onClick={handleStartAndStopPlay} className={`${isPlaying ? 'p-button-outlined p-button-danger' : ''}`}>{isPlaying ? <FaRegStopCircle /> : <FaPlay />}</Button>}
+        </div>
+
+        {
+          list && list.map((data, idx) => {
+            const handleGuesChange = guess => setList(list.map((item, _idx) => {
+              return idx === _idx ? { ...item, guess } : item
+            }))
+            const handleLifeChange = () => setList(list.map((item, _idx) => {
+              return idx === _idx ? { ...item, lifes: item.lifes - 1 } : item
+            }))
+            const handleHasDoneChange = (currentPoints) => setList(list.map((item, _idx) => {
+              return idx === _idx ? { ...item, hasDone: currentPoints } : item
+            }))
+
+            return <ListItem
+              {...{ ...data, isPlaying }}
+              onGuessChange={handleGuesChange}
+              onLifeChange={handleLifeChange}
+              onHasDoneChange={handleHasDoneChange}
+              key={data.name}
+            />
+          })
+        }
+
       </div>
-
-      {
-        list && list.map((data, idx) => {
-          const handleGuesChange = guess => setList(list.map((item, _idx) => {
-            return idx === _idx ? { ...item, guess } : item
-          }))
-          const handleLifeChange = () => setList(list.map((item, _idx) => {
-            return idx === _idx ? { ...item, lifes: item.lifes - 1 } : item
-          }))
-          const handleHasDoneChange = (currentPoints) => setList(list.map((item, _idx) => {
-            return idx === _idx ? { ...item, hasDone: currentPoints } : item
-          }))
-
-          return <ListItem
-            {...{ ...data, isPlaying }}
-            onGuessChange={handleGuesChange}
-            onLifeChange={handleLifeChange}
-            onHasDoneChange={handleHasDoneChange}
-            key={data.name}
-          />
-        })
-      }
-    </div>
+      <div className='p-d-flex p-jc-center footer'>
+        <Button label='Resetar' onClick={() => setList(list.map(({ dead, ...item }) => ({ ...item, lifes: 3, guess: 0, hasDone: 0 })))} className='p-button-outlined' />
+      </div>
+    </>
   );
 }
 

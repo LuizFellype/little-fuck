@@ -5,24 +5,30 @@ import { useEffect, useState } from 'react';
 import './App.css';
 import Input from './components/Input';
 
-// [{ name, guess, hasDone?, lifes }]
+const orderByDeads = (list) => {
+  const deads = list.filter(item => item.dead)
+  const alives = list.filter(item => !item.dead)
+  return [...alives, ...deads]
+}
+
+// [{ name, guess, hasDone?, lifes, dead }]
 const defaultLifes = 3
 
 function ListItem(props) {
-  const { lifes, name, guess = 0, hasDone = 0, onHasDoneChange, onGuessChange, isPlaying, onLifeChange } = props
+  const { lifes, name, guess = 0, hasDone = 0, dead, onHasDoneChange, onGuessChange, isPlaying, onLifeChange } = props
 
-  return <div className="p-d-flex p-flex-column p-jc-center item-wrapper p-mb-2">
+  return <div className={`p-d-flex p-flex-column p-jc-center item-wrapper p-mb-2 ${dead ? 'disabled' : ''}`}>
     <div className="p-d-flex p-jc-between p-ai-center">
-      <Button disabled label={`${lifes}`} onClick={() => lifes && onLifeChange()} icon="pi pi-heart" className="p-button-rounded p-button-help p-button-text" />
+      <Button disabled label={`${lifes}`} onClick={() => lifes >= 0 && onLifeChange()} icon="pi pi-heart" className="p-button-rounded p-button-help p-button-text" />
       <h2>{name}</h2>
 
       {isPlaying ? <Button
-          icon='pi pi-question-circle'
-          label={`${guess || 0}`}
-          disabled
-          className="p-button-rounded p-button-text p-as-center" />:
-      <InputNumber id="vertical" value={guess} onValueChange={(e) => onGuessChange(e.value)} mode="decimal" showButtons buttonLayout="vertical" style={{ width: '3rem' }} decrementButtonClassName="p-button-secondary" incrementButtonClassName="p-button-secondary" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" />
-}
+        icon='pi pi-question-circle'
+        label={`${guess || 0}`}
+        disabled
+        className="p-button-rounded p-button-text p-as-center" /> :
+        <InputNumber disabled={dead} id="vertical" value={guess} onValueChange={(e) => onGuessChange(e.value)} mode="decimal" showButtons buttonLayout="vertical" style={{ width: '3rem' }} decrementButtonClassName="p-button-secondary" incrementButtonClassName="p-button-secondary" incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus" />
+      }
     </div>
 
     {
@@ -46,11 +52,12 @@ function App() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [list, setList] = useState([])
 
-  // reset when stop previous play
+  // reset points when stop previous play
   useEffect(() => {
     if (!isPlaying && list.length) {
       setList(crrList => {
-        return crrList.map(item => ({ ...item, guess: 0, hasDone: 0 }))
+        const listResetedAndOrdered = orderByDeads(crrList.map(item => ({ ...item, guess: 0, hasDone: 0 })))
+        return listResetedAndOrdered
       })
     }
     // eslint-disable-next-line
@@ -61,13 +68,17 @@ function App() {
       // check if anyone has to die
       setList(list.map(item => {
         if (!item.lifes) return item
+
         if (Number(item.hasDone) !== Number(item.guess)) {
+          const playerWithLessLife = { ...item, lifes: item.lifes - 1 }
           if (Number(item.lifes) === 1) {
             alert(`${item.name} Morreeeeeuuu. Mete o pé porra.`)
-            return item
+            return { ...playerWithLessLife, dead: true }
           }
-          return { ...item, lifes: item.lifes - 1 }
+
+          return playerWithLessLife
         }
+
         return item
       }))
     }
@@ -78,7 +89,7 @@ function App() {
   return (
     <div className='app-wrapper'>
       <div className={`p-d-flex ${isPlaying ? 'p-jc-center' : 'p-jc-around'} header-to-start`}>
-        {!isPlaying && <Input onSubmit={value => setList([...list, { name: value, guess: 0, lifes: defaultLifes, hasDone: 0 }].sort((a, b) => a.name - b.name))} />}
+        {!isPlaying && <Input onSubmit={value => setList(orderByDeads([...list, { name: value, guess: 0, lifes: defaultLifes, hasDone: 0 }].sort((a, b) => a.name - b.name)))} />}
         {!!list.length && <Button onClick={handleStartAndStopPlay} className={`${isPlaying ? 'p-button-outlined p-button-danger' : ''}`}>{isPlaying ? <FaRegStopCircle /> : <FaPlay />}</Button>}
       </div>
 
@@ -99,7 +110,7 @@ function App() {
             onGuessChange={handleGuesChange}
             onLifeChange={handleLifeChange}
             onHasDoneChange={handleHasDoneChange}
-            key={idx}
+            key={data.name}
           />
         })
       }
